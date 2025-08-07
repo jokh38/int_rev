@@ -1,0 +1,29 @@
+app:
+  name: "Test MQI"
+  version: "1.0.0-test"
+  environment: "testing"
+
+paths:
+  local_logdata: "/tmp/mqi/local_data"
+  remote_workspace: "/tmp/mqi/remote_workspace"
+
+ssh:
+  host: "localhost"
+  port: 2222
+  username: "testuser"
+  key_file: "/tmp/mqi/fake_ssh_key"
+  connection_pool_size: 2
+
+resources:
+  max_concurrent_jobs: 2
+  gpu_count: 1
+  min_disk_space_gb: 10
+
+processing:
+  scan_interval_seconds: 10
+  retry_policy:
+    max_attempts: 2
+    base_delay: 0.5
+
+monitoring:
+  health_check_interval_seconds: 5
