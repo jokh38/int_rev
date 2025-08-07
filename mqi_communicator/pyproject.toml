@@ -1,0 +1,42 @@
+# pyproject.toml
+[tool.poetry]
+name = "mqi-communicator"
+version = "2.0.0"
+description = "A system to automate medical physics QA workflows."
+authors = ["Jules <agent.jules@example.com>"]
+packages = [{include = "mqi_communicator", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+dependency-injector = "^4.41.0"
+paramiko = "^3.4.0"
+prometheus-client = "^0.20.0"
+aiofiles = "^23.2.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+pytest-cov = "^5.0.0"
+mypy = "^1.10.0"
+docker = "^7.1.0"
+hypothesis = "^6.100.2"
+ruff = "^0.4.5"
+pre-commit = "^3.7.1"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+# Same as black.
+line-length = 100
+# A good starting set of rules.
+select = ["E", "F", "W", "I", "B", "C4", "UP"]
+ignore = []
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+# This is needed because the created files won't have type hints initially
+# and mypy would complain about every single one.
+# We can remove this later if we add stubs or type hints everywhere.
+allow_untyped_defs = true
+allow_untyped_calls = true
