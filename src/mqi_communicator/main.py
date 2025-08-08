@@ -3,11 +3,13 @@ import yaml
 
 from mqi_communicator.container import Container
 from mqi_communicator.controllers.application import Application
+from mqi_communicator.utils.logging_config import setup_logging
 
 def main():
     """
     The main entry point for the MQI Communicator application.
     """
+    setup_logging()
     parser = argparse.ArgumentParser(description="MQI Communicator")
     parser.add_argument(
         "-c", "--config",

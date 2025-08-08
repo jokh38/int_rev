@@ -9,6 +9,7 @@ from mqi_communicator.services.interfaces import (
     ICaseService, ITransferService, IJobService, IResourceService
 )
 from mqi_communicator.domain.models import Task, TaskType
+from mqi_communicator.utils import metrics
 
 class WorkflowOrchestrator(IWorkflowOrchestrator):
     """
@@ -59,8 +60,10 @@ class WorkflowOrchestrator(IWorkflowOrchestrator):
         while not self._stop_event.is_set():
             # 1. Scan for new cases and schedule them
             new_case_ids = self._case_service.scan_for_new_cases()
-            for case_id in new_case_ids:
-                self._task_scheduler.schedule_case(case_id)
+            if new_case_ids:
+                metrics.CASES_RECEIVED.inc(len(new_case_ids))
+                for case_id in new_case_ids:
+                    self._task_scheduler.schedule_case(case_id)
 
             # 2. Process tasks from the queue
             task = self._task_scheduler.get_next_task()
@@ -80,19 +83,28 @@ class WorkflowOrchestrator(IWorkflowOrchestrator):
         """Executes a single task."""
         handler = self._task_handlers.get(task.type)
         if handler:
-            try:
-                # Get the job associated with the task to pass to the handler
-                job = self._job_service.get(task.job_id)
-                if job:
-                    handler(task, job)
-                    self._task_scheduler.complete_task(task.task_id)
-                else:
-                    # Handle missing job
+            with metrics.TASK_EXECUTION_TIME.labels(task_type=task.type.value).time():
+                try:
+                    metrics.ACTIVE_JOBS.inc()
+                    # Get the job associated with the task to pass to the handler
+                    job = self._job_service.get(task.job_id)
+                    if job:
+                        handler(task, job)
+                        self._task_scheduler.complete_task(task.task_id)
+                        # Check if this was the last task for the job
+                        # A more robust system would track this properly
+                        if task.type == TaskType.DOWNLOAD:
+                            metrics.CASES_COMPLETED.inc()
+                    else:
+                        # Handle missing job
+                        metrics.CASES_FAILED.inc()
+                except Exception:
+                    # Handle task execution failure
+                    metrics.CASES_FAILED.inc()
+                    # e.g., mark task as failed, release resources
                     pass
-            except Exception:
-                # Handle task execution failure
-                # e.g., mark task as failed, release resources
-                pass
+                finally:
+                    metrics.ACTIVE_JOBS.dec()
         else:
             # Handle unknown task type
             pass

@@ -105,5 +105,6 @@ class Container(containers.DeclarativeContainer):
     application = providers.Singleton(
         Application,
         lifecycle_manager=lifecycle_manager,
-        workflow_orchestrator=workflow_orchestrator
+        workflow_orchestrator=workflow_orchestrator,
+        monitoring_config=config.monitoring
     )

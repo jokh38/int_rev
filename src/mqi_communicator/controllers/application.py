@@ -1,5 +1,10 @@
 from .interfaces import ILifecycleManager
 from mqi_communicator.domain.interfaces import IWorkflowOrchestrator
+from mqi_communicator.infrastructure.config.models import MonitoringConfig
+from prometheus_client import start_http_server
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Application:
     """
@@ -10,14 +15,24 @@ class Application:
         self,
         lifecycle_manager: ILifecycleManager,
         workflow_orchestrator: IWorkflowOrchestrator,
+        monitoring_config: MonitoringConfig,
     ):
         self._lifecycle_manager = lifecycle_manager
         self._orchestrator = workflow_orchestrator
+        self._monitoring_config = monitoring_config
 
     def run(self):
         """
         Starts and runs the application.
         """
+        # Start metrics server
+        try:
+            start_http_server(self._monitoring_config.metrics_port)
+            logger.info(f"Prometheus metrics server started on port {self._monitoring_config.metrics_port}")
+        except Exception as e:
+            logger.error(f"Could not start Prometheus metrics server: {e}")
+            # Decide if this is a fatal error. For now, we'll just log it.
+
         if not self._lifecycle_manager.acquire_lock():
             print("Application lock could not be acquired. Exiting.")
             return

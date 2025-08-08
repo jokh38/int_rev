@@ -38,6 +38,7 @@ class ProcessingConfig:
 
 @dataclass
 class MonitoringConfig:
+    metrics_port: int = 8000
     metrics_interval_seconds: int = 30
     health_check_interval_seconds: int = 60
 

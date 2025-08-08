@@ -1,0 +1,45 @@
+# --- MQI Communicator Example Configuration ---
+
+# Application settings
+app:
+  name: "MQI Communicator"
+  version: "2.0.0"
+  environment: "production"
+
+# Path configurations
+paths:
+  # Local path where new case directories appear
+  local_logdata: "/path/to/your/local/data"
+  # Remote path on the HPC where cases will be uploaded
+  remote_workspace: "/path/to/your/remote/workspace"
+  # Path to store the application's persistent state
+  state_file: "state.json"
+  # Path for the PID file to ensure single instance
+  pid_file: "mqi.pid"
+
+# SSH connection details for the remote HPC
+ssh:
+  host: "hpc.example.com"
+  port: 22
+  username: "your_username"
+  # key_file: "/path/to/your/ssh/private_key" # Optional, assumes key is in ssh-agent if not provided
+  connection_pool_size: 5
+
+# Resource management settings
+resources:
+  max_concurrent_jobs: 4
+  total_gpu_count: 8 # Total number of GPUs available on the remote host
+  min_disk_space_gb: 50 # Will not process new cases if free disk space is below this value
+
+# Processing workflow settings
+processing:
+  scan_interval_seconds: 60 # How often to scan for new cases
+  retry_policy:
+    max_attempts: 3
+    base_delay: 1.0
+
+# Monitoring settings
+monitoring:
+  metrics_port: 8000 # Port for the Prometheus metrics endpoint
+  metrics_interval_seconds: 30
+  health_check_interval_seconds: 60
