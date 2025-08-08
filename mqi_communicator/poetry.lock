@@ -865,7 +865,6 @@ files = [
 test = ["enum34 ; python_version <= \"3.4\"", "ipaddress ; python_version < \"3.0\"", "mock ; python_version < \"3.0\"", "pywin32 ; sys_platform == \"win32\"", "wmi ; sys_platform == \"win32\""]
 
 [[package]]
-
 name = "pycparser"
 version = "2.22"
 description = "C parser in Python"
@@ -1170,4 +1169,3 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 lock-version = "2.1"
 python-versions = "^3.11"
 content-hash = "6f21d496b26f41429dbb1264e4e5f5b27607081119ce46370b6cfa0656bc78e7"
-
