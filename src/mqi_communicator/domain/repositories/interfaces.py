@@ -41,3 +41,16 @@ class IJobRepository(Protocol):
     def find_by_case_id(self, case_id: str) -> List[Job]:
         """Finds all jobs associated with a given case ID."""
         ...
+
+
+class IResourceRepository(Protocol):
+    """
+    Interface for a repository that manages system resource state.
+    """
+    def get_allocated_gpus(self) -> List[int]:
+        """Returns a list of currently allocated GPU IDs."""
+        ...
+
+    def set_allocated_gpus(self, gpu_ids: List[int]) -> None:
+        """Sets the list of allocated GPU IDs."""
+        ...

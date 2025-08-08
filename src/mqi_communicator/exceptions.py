@@ -9,3 +9,11 @@ class ConfigurationError(MQIError):
 class ValidationError(ConfigurationError):
     """Raised when configuration validation fails."""
     pass
+
+class TransferError(MQIError):
+    """Raised for file transfer related errors."""
+    pass
+
+class ExecutorError(MQIError):
+    """Raised for errors during command execution."""
+    pass
